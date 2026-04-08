@@ -1,0 +1,46 @@
+# 네오 소비지수(NCI) 가중치 설정
+# NCI = weighted_sum(components) / sum(weights)
+
+nci_components:
+  retail_sales_index:
+    name: 소매판매액지수
+    weight: 0.35
+    source: kosis
+    normalization:
+      baseline: 100     # 기준값 (2020=100)
+      min_nci: 0
+      max_nci: 100
+
+  consumer_sentiment:
+    name: 소비자심리지수(CSI)
+    weight: 0.30
+    source: bok
+    normalization:
+      baseline: 100     # 기준선 (100 = 중립)
+      min_nci: 0
+      max_nci: 100
+
+  service_production:
+    name: 서비스업생산지수
+    weight: 0.20
+    source: kosis
+    normalization:
+      baseline: 100
+      min_nci: 0
+      max_nci: 100
+
+  news_sentiment:
+    name: 뉴스감성지수
+    weight: 0.15
+    source: ai_analysis
+    normalization:
+      baseline: 0       # -1 ~ +1 범위
+      min_nci: 0
+      max_nci: 100
+
+# ISI 산출 설정
+isi_settings:
+  baseline: 50           # 경기 중립 기준선
+  news_weight: 0.3       # 뉴스 감성 반영 비중
+  statistics_weight: 0.7  # 통계 지표 반영 비중
+  smoothing: 0.3         # 지수 이동평균 계수 (0=이전값유지, 1=새값반영)

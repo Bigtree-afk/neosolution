@@ -1,0 +1,129 @@
+{{ define "main" }}
+
+{{/* ── Hero Section ─────────────────────────────────────── */}}
+<div class="hero">
+  <div class="hero-badge">VAN &middot; POS &middot; 소비 인사이트</div>
+  <h1>데이터로 읽는<br><span>소비 트렌드</span></h1>
+  <p class="hero-subtitle">
+    네오솔루션은 VAN 서비스와 POS 솔루션을 넘어,<br>
+    AI 기반 소비 트렌드 분석으로 시장의 흐름을 전달합니다.
+  </p>
+  <div class="hero-actions">
+    <a href="/insights/" class="btn btn-primary">최신 인사이트</a>
+    <a href="/index/neo-consumption/" class="btn btn-outline">소비지수 보기</a>
+  </div>
+</div>
+
+{{/* ── NCI 요약 ─────────────────────────────────────────── */}}
+{{ with site.Data.nci_latest }}
+<section class="mb-4">
+  <div class="section-header">
+    <div class="section-label">Neo Consumption Index</div>
+    <h2 class="section-title">이번 주 네오 소비지수</h2>
+    <p class="section-desc">공공 경제 데이터와 AI 분석으로 산출하는 소비 트렌드 지수</p>
+  </div>
+
+  <div class="isi-grid">
+    {{ range $k, $v := . }}
+    <div class="isi-card">
+      <div class="isi-sector">{{ $k | replace "_" " " | title }}</div>
+      <div class="isi-value" style="color: {{ if ge $v 60.0 }}#16a34a{{ else if ge $v 40.0 }}#1e293b{{ else }}#dc2626{{ end }};">
+        {{ printf "%.0f" (float $v) }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+
+  <p class="text-center mt-2">
+    <a href="/index/neo-consumption/" style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">전체 지수 대시보드 &rarr;</a>
+  </p>
+</section>
+{{ end }}
+
+{{/* ── 최신 인사이트 ────────────────────────────────────── */}}
+<section class="mb-4">
+  <div class="section-header">
+    <div class="section-label">Latest Insights</div>
+    <h2 class="section-title">최신 시장 인사이트</h2>
+    <p class="section-desc">매주 업데이트되는 소비 트렌드 분석과 업종별 전망</p>
+  </div>
+
+  <div class="card-grid">
+    {{ range first 6 (where site.RegularPages "Section" "insights") }}
+    <a href="{{ .Permalink }}" class="card insight-card">
+      <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+      <div class="card-title">{{ .Title }}</div>
+      <div class="card-desc">{{ .Description }}</div>
+      {{ with .Params.tags }}
+      <div class="card-tags">
+        {{ range first 3 . }}<span class="tag">{{ . }}</span>{{ end }}
+      </div>
+      {{ end }}
+    </a>
+    {{ end }}
+  </div>
+
+  <p class="text-center mt-2">
+    <a href="/insights/" style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">전체 인사이트 보기 &rarr;</a>
+  </p>
+</section>
+
+{{/* ── 서비스 소개 ──────────────────────────────────────── */}}
+<section class="mb-4">
+  <div class="section-header">
+    <div class="section-label">Our Services</div>
+    <h2 class="section-title">업종별 맞춤 솔루션</h2>
+    <p class="section-desc">유통, 외식, 식자재 업종에 최적화된 VAN과 POS를 제공합니다</p>
+  </div>
+
+  <div class="service-grid">
+    <a href="/services/pos/retail/" class="service-card">
+      <div class="service-icon">&#128722;</div>
+      <div class="service-name">유통/소매 POS</div>
+      <div class="service-desc">편의점, 슈퍼마켓, 소매점에 최적화된 재고 관리와 결제 솔루션</div>
+    </a>
+
+    <a href="/services/pos/restaurant/" class="service-card">
+      <div class="service-icon">&#127860;</div>
+      <div class="service-name">외식업 POS</div>
+      <div class="service-desc">테이블 관리, 주방 연동, 배달 통합이 가능한 외식 전용 시스템</div>
+    </a>
+
+    <a href="/services/pos/food-mart/" class="service-card">
+      <div class="service-icon">&#127819;</div>
+      <div class="service-name">식자재마트 POS</div>
+      <div class="service-desc">대량 거래, 거래처 관리, 세금계산서 발행에 특화된 도매 솔루션</div>
+    </a>
+
+    <a href="/services/van/" class="service-card">
+      <div class="service-icon">&#128179;</div>
+      <div class="service-name">VAN 서비스</div>
+      <div class="service-desc">안정적인 신용카드 승인 네트워크와 합리적인 수수료 체계</div>
+    </a>
+  </div>
+</section>
+
+{{/* ── 소상공인 가이드 ──────────────────────────────────── */}}
+<section class="mb-4">
+  <div class="section-header">
+    <div class="section-label">Business Guides</div>
+    <h2 class="section-title">소상공인 가이드</h2>
+    <p class="section-desc">창업부터 운영까지, 사업에 필요한 실전 노하우</p>
+  </div>
+
+  <div class="card-grid">
+    {{ range first 3 (where site.RegularPages "Section" "guides") }}
+    <a href="{{ .Permalink }}" class="card insight-card">
+      <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+      <div class="card-title">{{ .Title }}</div>
+      <div class="card-desc">{{ .Description }}</div>
+    </a>
+    {{ end }}
+  </div>
+</section>
+
+{{/* ── CTA + Newsletter ─────────────────────────────────── */}}
+{{ partial "cta-contact.html" . }}
+{{ partial "newsletter-signup.html" . }}
+
+{{ end }}

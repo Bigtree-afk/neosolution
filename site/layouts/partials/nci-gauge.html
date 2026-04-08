@@ -1,0 +1,57 @@
+{{/*
+  nci-gauge.html
+  네오 소비지수(NCI) 게이지 바 렌더링
+  Data source: .Params.nci_scores (map: category → 0–100)
+*/}}
+
+{{ $labels := dict
+  "overall"          "종합 소비지수"
+  "restaurant"       "외식업"
+  "retail"           "유통/소매"
+  "food_mart"        "식자재유통"
+  "cafe_bakery"      "카페/제과"
+  "convenience"      "편의점"
+  "clothing"         "의류/잡화"
+}}
+
+{{ $palette := slice
+  "#2563eb,#1d4ed8"
+  "#059669,#047857"
+  "#8b5cf6,#7c3aed"
+  "#f59e0b,#d97706"
+  "#ec4899,#db2777"
+  "#06b6d4,#0891b2"
+  "#f97316,#ea580c"
+}}
+
+{{ with .Params.nci_scores }}
+<div class="nci-section">
+  <div class="nci-header">
+    <span class="nci-label">Neo Consumption Index</span>
+    <span class="nci-hint">70+ 호황 · 50 보통 · 30 이하 침체</span>
+  </div>
+  <div class="nci-title">이번 주 네오 소비지수</div>
+
+  <div class="nci-gauges">
+    {{ $sorted := slice }}
+    {{ range $k, $v := . }}
+      {{ $sorted = $sorted | append (dict "key" $k "val" $v) }}
+    {{ end }}
+    {{ $idx := 0 }}
+    {{ range sort $sorted "val" "desc" }}
+    {{ $key := .key }}
+    {{ $val := .val }}
+    {{ $colorPair := index $palette (mod $idx (len $palette)) }}
+    {{ $displayLabel := index $labels $key | default ($key | replace "_" " " | title) }}
+    <div class="nci-gauge-row">
+      <div class="nci-gauge-label">{{ $displayLabel }}</div>
+      <div class="nci-gauge-track">
+        <div class="nci-gauge-fill" style="width:{{ $val }}%; background: linear-gradient(90deg, {{ $colorPair }});"></div>
+      </div>
+      <div class="nci-gauge-val" style="color: {{ index (split $colorPair ",") 1 }};">{{ printf "%.0f" (float $val) }}</div>
+    </div>
+    {{ $idx = add $idx 1 }}
+    {{ end }}
+  </div>
+</div>
+{{ end }}

@@ -1,0 +1,32 @@
+{{ define "main" }}
+
+<article>
+  <header style="margin-bottom: 2.5rem;">
+    <div class="section-label" style="margin-bottom: 0.5rem;">Services</div>
+    <h1 style="font-size: 2rem; font-weight: 900; margin-bottom: 0.75rem;">{{ .Title }}</h1>
+    {{ with .Description }}
+    <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6;">{{ . }}</p>
+    {{ end }}
+  </header>
+
+  <div class="editorial-content">
+    {{ .Content }}
+  </div>
+
+  {{/* 관련 서비스 링크 */}}
+  <div style="margin: 3rem 0 2rem;">
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">다른 서비스 보기</h3>
+    <div class="service-grid">
+      {{ range where (where site.RegularPages "Section" "services") "Permalink" "ne" .Permalink }}
+      <a href="{{ .Permalink }}" class="service-card" style="text-align: left; padding: 1.25rem;">
+        <div class="service-name">{{ .Title }}</div>
+        <div class="service-desc">{{ .Description }}</div>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+
+  {{ partial "cta-contact.html" . }}
+</article>
+
+{{ end }}

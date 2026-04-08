@@ -1,0 +1,29 @@
+{{ define "main" }}
+
+<div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+  <h1 class="section-title">{{ .Title }}</h1>
+  {{ with .Description }}<p class="section-desc" style="margin: 0;">{{ . }}</p>{{ end }}
+</div>
+
+{{ if .Pages }}
+<div class="card-grid">
+  {{ range .Pages.ByDate.Reverse }}
+  <a href="{{ .Permalink }}" class="card insight-card">
+    <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+    <div class="card-title">{{ .Title }}</div>
+    <div class="card-desc">{{ .Description }}</div>
+    {{ with .Params.tags }}
+    <div class="card-tags">
+      {{ range first 3 . }}<span class="tag">{{ . }}</span>{{ end }}
+    </div>
+    {{ end }}
+  </a>
+  {{ end }}
+</div>
+{{ else }}
+<p style="color: var(--text-muted); text-align: center; padding: 3rem 0;">
+  아직 등록된 콘텐츠가 없습니다. 곧 업데이트됩니다.
+</p>
+{{ end }}
+
+{{ end }}

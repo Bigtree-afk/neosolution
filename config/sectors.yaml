@@ -1,0 +1,75 @@
+# 업종 정의 및 키워드
+# ISI 산출 시 뉴스 감성 분석에 사용
+
+sectors:
+  general_restaurant:
+    name: 일반음식점
+    name_en: General Restaurant
+    keywords:
+      - 음식점
+      - 외식
+      - 한식
+      - 중식
+      - 일식
+      - 양식
+      - 식당
+      - 맛집
+
+  cafe_bakery:
+    name: 카페/제과
+    name_en: Cafe & Bakery
+    keywords:
+      - 카페
+      - 커피
+      - 베이커리
+      - 제과
+      - 디저트
+      - 스타벅스
+      - 투썸
+
+  convenience:
+    name: 편의점
+    name_en: Convenience Store
+    keywords:
+      - 편의점
+      - CU
+      - GS25
+      - 세븐일레븐
+      - 이마트24
+      - 간편식
+
+  supermarket:
+    name: 슈퍼/마트
+    name_en: Supermarket
+    keywords:
+      - 마트
+      - 슈퍼마켓
+      - 이마트
+      - 홈플러스
+      - 롯데마트
+      - 코스트코
+      - 대형마트
+
+  food_distribution:
+    name: 식자재유통
+    name_en: Food Distribution
+    keywords:
+      - 식자재
+      - 도매
+      - 농산물
+      - 수산물
+      - 축산물
+      - 유통
+      - 식자재마트
+
+  clothing:
+    name: 의류/잡화
+    name_en: Clothing & Accessories
+    keywords:
+      - 의류
+      - 패션
+      - 잡화
+      - 옷
+      - 브랜드
+      - SPA
+      - 아울렛

@@ -1,0 +1,60 @@
+당신은 네오솔루션의 주간 소비 트렌드 리포트 작성자입니다.
+
+아래 분석 데이터를 바탕으로 주간 소비 트렌드 리포트를 JSON 형식으로 생성해 주세요.
+
+## 작성 날짜
+{date}
+
+## NCI (네오 소비지수)
+{nci_scores}
+
+## ISI (업종별 경기체감지수)
+{isi_scores}
+
+## AI 분석 결과
+{ai_analysis}
+
+## 뉴스 요약
+{news_summary}
+
+## 출력 형식
+
+아래 JSON 스키마에 맞춰 응답해 주세요:
+
+```json
+{{
+  "title": "2026년 X월 X째주 소비 트렌드: 핵심 키워드",
+  "slug": "weekly-trend-2026-wXX",
+  "description": "SEO 최적화된 한줄 요약 (160자 이내)",
+  "tags": ["태그1", "태그2", "태그3", "태그4"],
+  "nci_scores": {{"overall": 0, "restaurant": 0, "retail": 0, "food_mart": 0}},
+  "isi_scores": {{"general_restaurant": 0, "cafe_bakery": 0, "convenience": 0, "supermarket": 0, "food_distribution": 0, "clothing": 0}},
+  "key_numbers": [
+    {{"label": "지표명", "value": "값", "change": "+X.X%", "color": "accent|secondary"}},
+    {{"label": "지표명", "value": "값", "change": "-X.X%"}}
+  ],
+  "predictions": {{
+    "예측대상": {{"direction": "up|down|neutral", "confidence": 0.0~1.0, "label": "한줄 설명"}}
+  }},
+  "insight": {{
+    "title": "핵심 인사이트 제목",
+    "body": "핵심 인사이트 설명 (2~3문장)"
+  }},
+  "tomorrow_signals": [
+    {{"title": "시그널 제목", "body": "설명"}},
+    {{"title": "시그널 제목", "body": "설명"}},
+    {{"title": "시그널 제목", "body": "설명"}}
+  ],
+  "body": "## 이번 주 핵심\n\n본문 마크다운...\n\n## 업종별 분석\n\n### 외식업\n...\n\n### 유통/소매\n...\n\n### 식자재 유통\n...\n\n## 다음 주 전망\n..."
+}}
+```
+
+## 작성 지침
+
+1. **제목**: "2026년 X월 X째주 소비 트렌드: [핵심 키워드]" 형식
+2. **본문**: 1500~2000자 이내, H2/H3 헤딩 구조
+3. **톤**: 전문적이되 소상공인이 이해하기 쉬운 언어
+4. **데이터 인용**: NCI/ISI 수치를 본문에 자연스럽게 인용
+5. **예측**: 보수적으로 작성 (confidence 0.5~0.8)
+6. **SEO**: description은 검색에 최적화된 자연어 요약
+7. **실용성**: 소상공인이 다음 주 사업 운영에 참고할 수 있는 액션 포인트 포함

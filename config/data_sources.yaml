@@ -1,0 +1,62 @@
+# 데이터 소스 설정
+# 각 수집기가 참조하는 API 엔드포인트 및 파라미터
+
+kosis:
+  base_url: https://kosis.kr/openapi/Param/statisticsParameterData.do
+  indicators:
+    retail_sales_index:
+      name: 소매판매액지수
+      orgId: '101'
+      tblId: DT_1KE10041
+      itmId: T10
+      objL1: '00'
+    service_production_index:
+      name: 서비스업생산지수
+      orgId: '101'
+      tblId: DT_1KE20051
+      itmId: T10
+      objL1: '00'
+    consumer_price_index:
+      name: 소비자물가지수
+      orgId: '101'
+      tblId: DT_1J20003
+      itmId: T10
+      objL1: '00'
+
+bok:
+  base_url: https://ecos.bok.or.kr/api
+  indicators:
+    base_rate:
+      name: 기준금리
+      stat_code: 722Y001
+      item_code: '0101000'
+    consumer_sentiment:
+      name: 소비자심리지수(CSI)
+      stat_code: 511Y002
+      item_code: FME
+    household_credit:
+      name: 가계신용
+      stat_code: 151Y013
+      item_code: BBAA00
+
+kamis:
+  base_url: https://www.kamis.or.kr/service/price/xml.do
+  categories:
+    - name: 채소류
+      code: '200'
+    - name: 과일류
+      code: '400'
+    - name: 축산물
+      code: '500'
+    - name: 수산물
+      code: '600'
+
+newsapi:
+  base_url: https://newsapi.org/v2/everything
+  language: ko
+  page_size: 50
+
+rss_feeds:
+  매일경제: https://www.mk.co.kr/rss/30100041/
+  한국경제: https://www.hankyung.com/feed/economy
+  이데일리: https://rss.edaily.co.kr/edaily_economy.xml

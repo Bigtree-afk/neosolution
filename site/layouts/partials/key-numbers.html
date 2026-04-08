@@ -1,0 +1,19 @@
+{{/*
+  key-numbers.html
+  핵심 숫자 카드 렌더링
+  Data source: .Params.key_numbers (array of {label, value, change, color})
+*/}}
+
+{{ with .Params.key_numbers }}
+<div class="key-numbers">
+  {{ range . }}
+  <div class="key-number">
+    <div class="key-number-label">{{ .label }}</div>
+    <div class="key-number-value" {{ with .color }}style="color: var(--{{ . }});"{{ end }}>{{ .value }}</div>
+    {{ with .change }}
+    <div class="key-number-change" style="color: {{ if hasPrefix . "+" }}var(--up){{ else if hasPrefix . "-" }}var(--down){{ else }}var(--neutral){{ end }};">{{ . }}</div>
+    {{ end }}
+  </div>
+  {{ end }}
+</div>
+{{ end }}

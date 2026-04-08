@@ -1,0 +1,45 @@
+baseURL = 'https://neosolution.co.kr/'
+title = 'NeoSolution'
+defaultContentLanguage = 'ko'
+cleanDestinationDir = true
+
+[languages]
+  [languages.ko]
+    languageCode = 'ko'
+    languageName = '한국어'
+    contentDir = 'content/ko'
+    weight = 1
+    [languages.ko.params]
+      subtitle = 'VAN·POS 전문기업 | 소비 트렌드 인사이트'
+      description = '네오솔루션은 VAN 서비스와 POS 솔루션을 제공하며, AI 기반 소비 트렌드 분석으로 소상공인에게 시장 인사이트를 전달합니다.'
+
+[params]
+  author = 'NeoSolution'
+  tagline = '데이터로 읽는 소비 트렌드'
+  company_name = '네오솔루션'
+  company_name_en = 'NeoSolution'
+  phone = '1588-0000'
+  email = 'info@neosolution.co.kr'
+  address = '서울특별시 강남구'
+  # GA4 측정 ID
+  ga4_id = ''
+  # Google Search Console
+  google_site_verification = ''
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[outputs]
+  home = ['HTML', 'RSS']
+  section = ['HTML', 'RSS']
+
+[sitemap]
+  changeFreq = 'daily'
+  priority = 0.5
+
+[taxonomies]
+  tag = 'tags'
+  category = 'categories'
+  sector = 'sectors'

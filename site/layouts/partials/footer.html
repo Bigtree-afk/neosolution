@@ -1,0 +1,42 @@
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Neo<span style="color:#2563eb">Solution</span></div>
+      <p class="footer-desc">{{ .Site.Params.description }}</p>
+      <div class="footer-contact">
+        {{ with .Site.Params.phone }}<div>{{ . }}</div>{{ end }}
+        {{ with .Site.Params.email }}<div>{{ . }}</div>{{ end }}
+        {{ with .Site.Params.address }}<div>{{ . }}</div>{{ end }}
+      </div>
+    </div>
+
+    <div class="footer-section">
+      <h4>인사이트</h4>
+      <a href="/insights/weekly/">주간 트렌드</a>
+      <a href="/insights/monthly/">월간 분석</a>
+      <a href="/index/neo-consumption/">소비지수</a>
+      <a href="/index/industry-sentiment/">경기체감지수</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>서비스</h4>
+      <a href="/services/van/">VAN 서비스</a>
+      <a href="/services/pos/retail/">유통 POS</a>
+      <a href="/services/pos/restaurant/">외식업 POS</a>
+      <a href="/services/pos/food-mart/">식자재 POS</a>
+      <a href="/services/pricing/">요금 안내</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>회사</h4>
+      <a href="/about/">회사소개</a>
+      <a href="/cases/">고객사례</a>
+      <a href="/contact/">가맹 문의</a>
+      <a href="/newsletter/">뉴스레터</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    &copy; {{ now.Year }} {{ .Site.Params.company_name }}. All rights reserved.
+  </div>
+</footer>

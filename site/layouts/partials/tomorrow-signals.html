@@ -1,0 +1,26 @@
+{{/*
+  tomorrow-signals.html
+  다음 주 주목 시그널 렌더링
+  Data source: .Params.tomorrow_signals (array of {title, body})
+*/}}
+
+{{ with .Params.tomorrow_signals }}
+<div class="tomorrow-signals">
+  <h3>다음 주 주목할 시그널</h3>
+  <div class="signal-list">
+    {{ range $i, $s := . }}
+    <div class="signal-item">
+      <div class="signal-icon">{{ add $i 1 }}</div>
+      <div>
+        {{ if reflect.IsMap $s }}
+        <div class="signal-title">{{ $s.title }}</div>
+        {{ with $s.body }}<div class="signal-body">{{ . }}</div>{{ end }}
+        {{ else }}
+        <div class="signal-title">{{ $s }}</div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

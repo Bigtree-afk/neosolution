@@ -1,0 +1,87 @@
+{{ define "main" }}
+
+<article class="editorial-post">
+
+  {{/* Masthead */}}
+  <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 0.5rem 0; margin: -2rem -1.5rem 2rem; text-align: center;">
+    <div style="max-width: var(--content-width); margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap;">
+      <span style="font-weight: 700; color: var(--accent);">NeoSolution</span>
+      <span>&middot;</span>
+      <span>데이터로 읽는 소비 트렌드</span>
+      <span>&middot;</span>
+      <span>{{ .Date.Format "2006.01.02" }}</span>
+    </div>
+  </div>
+
+  {{/* Hero */}}
+  <header style="margin-bottom: 2rem;">
+    {{ with .Params.categories }}
+    <div style="margin-bottom: 0.5rem;">
+      {{ range . }}<span class="tag tag-accent">{{ . }}</span> {{ end }}
+    </div>
+    {{ end }}
+
+    <h1 style="font-size: 1.8rem; font-weight: 900; line-height: 1.3; margin-bottom: 0.75rem;">{{ .Title }}</h1>
+
+    {{ with .Description }}
+    <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">{{ . }}</p>
+    {{ end }}
+
+    <div style="font-size: 0.82rem; color: var(--text-light); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+      <span>{{ .Date.Format "2006년 01월 02일" }}</span>
+      {{ with .ReadingTime }}<span>~{{ . }}분 읽기</span>{{ end }}
+      {{ with .Params.tags }}
+      {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
+      {{ end }}
+    </div>
+  </header>
+
+  {{/* Key Numbers */}}
+  {{ partial "key-numbers.html" . }}
+
+  {{/* NCI Gauge */}}
+  {{ partial "nci-gauge.html" . }}
+
+  {{/* ISI Bars */}}
+  {{ partial "isi-bars.html" . }}
+
+  {{/* Insight Box */}}
+  {{ partial "insight-box.html" . }}
+
+  {{/* Article Body */}}
+  <div class="editorial-content">
+    {{ .Content }}
+  </div>
+
+  {{/* Predictions */}}
+  {{ partial "prediction-cards.html" . }}
+
+  {{/* Tomorrow Signals */}}
+  {{ partial "tomorrow-signals.html" . }}
+
+  {{/* Charts */}}
+  {{ with .Params.chart_images }}
+  <div style="margin: 2rem 0;">
+    {{ range . }}
+    <img src="{{ . }}" alt="차트" style="border-radius: var(--radius-md); margin-bottom: 1rem;">
+    {{ end }}
+  </div>
+  {{ end }}
+
+  {{/* Share */}}
+  {{ partial "share-buttons.html" . }}
+
+  {{/* Disclaimer */}}
+  <div class="disclaimer">
+    본 콘텐츠는 정보 제공 목적으로 작성되었으며, 투자 권유나 사업 자문을 구성하지 않습니다.
+    네오 소비지수(NCI)와 업종별 경기체감지수(ISI)는 공공 통계 데이터와 AI 분석에 기반한 참고 지표이며,
+    실제 시장 상황과 차이가 있을 수 있습니다.
+  </div>
+
+  {{/* CTA + Newsletter */}}
+  {{ partial "cta-contact.html" . }}
+  {{ partial "newsletter-signup.html" . }}
+
+</article>
+
+{{ end }}
