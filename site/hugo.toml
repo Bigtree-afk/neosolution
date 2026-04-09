@@ -1,6 +1,7 @@
 baseURL = 'https://neosolution.co.kr/'
 title = 'NeoSolution'
 defaultContentLanguage = 'ko'
+defaultContentLanguageInSubdir = false
 cleanDestinationDir = true
 
 [languages]
