@@ -1,0 +1,43 @@
+{{/* 카테고리별 가격 테이블 partial
+   사용: {{ partial "price-table.html" . }}
+   필요 프론트매터: .Params.market_prices (list of {category, items[]})
+*/}}
+
+{{ with .Params.market_prices }}
+<div class="price-tables-section">
+  <h2 class="section-title">품목별 가격 현황</h2>
+
+  {{ range . }}
+  <div class="price-category-block" id="{{ .category }}">
+    <h3 class="price-category-title">{{ .category }}</h3>
+    <div class="price-table-wrapper">
+      <table class="price-table">
+        <thead>
+          <tr>
+            <th>품목</th>
+            <th>단위</th>
+            <th>도매가 (원)</th>
+            <th>전일 대비</th>
+            <th>시장</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range .items }}
+          <tr>
+            <td class="price-item-name">{{ .name }}</td>
+            <td class="price-unit">{{ .unit }}</td>
+            <td class="price-value">{{ .wholesale_price | lang.FormatNumber 0 }}</td>
+            <td class="price-change {{ if eq .change_direction "up" }}price-change-up{{ else if eq .change_direction "down" }}price-change-down{{ else }}price-change-neutral{{ end }}">
+              {{ if eq .change_direction "up" }}▲{{ else if eq .change_direction "down" }}▼{{ else }}→{{ end }}
+              {{ .change_pct | math.Abs | printf "%.1f" }}%
+            </td>
+            <td class="price-market">{{ .market }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}

@@ -38,6 +38,30 @@ nci_components:
       min_nci: 0
       max_nci: 100
 
+# 독립 서브지수 (overall NCI 계산에 포함되지 않음, 별도 표시용)
+supplemental_indices:
+  food_price_pressure:
+    name: 식자재가격압력지수
+    name_en: Food Price Pressure Index
+    source: kamis
+    description: "도매가격 상승 압력 지수 — 높을수록 원가 부담 증가 (0=저압, 100=고압)"
+    normalization:
+      direction: inverse      # 가격 상승 → 압력 상승
+      baseline_yoy: 0.0       # 전년동기비 0% = 50점
+      scale_factor: 5.0       # ±5% 변동 = ±25점
+      min_nci: 0
+      max_nci: 100
+
+  consumer_spending_power:
+    name: 실질소비여력지수
+    name_en: Consumer Spending Power Index
+    source: bok_kosis_combined
+    description: "CSI + 소매판매 + 물가 복합 — 소비자 실질 구매력 (0=위축, 100=활발)"
+    normalization:
+      baseline: 50
+      min_nci: 0
+      max_nci: 100
+
 # ISI 산출 설정
 isi_settings:
   baseline: 50           # 경기 중립 기준선

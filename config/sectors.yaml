@@ -73,3 +73,18 @@ sectors:
       - 브랜드
       - SPA
       - 아울렛
+
+  ingredient_market:
+    name: 식자재시장
+    name_en: Ingredient Market
+    keywords:
+      - 가락시장
+      - 농산물
+      - 식자재
+      - 도매시장
+      - 청과
+      - 수산물
+      - 축산물
+      - 원자재가격
+      - 식품원료
+      - 농수산물

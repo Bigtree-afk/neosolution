@@ -903,3 +903,485 @@ footer {
 .mb-2 { margin-bottom: 1rem; }
 .mb-3 { margin-bottom: 1.5rem; }
 .mb-4 { margin-bottom: 2rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   유통정보 (Distribution) — 가격 데이터 전용 컴포넌트
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 가격 변동 색상 (인사이트와 반대: 상승=부담=빨강) ─── */
+.price-change-up   { color: var(--down);    font-weight: 700; }
+.price-change-down { color: var(--up);      font-weight: 700; }
+.price-change-neutral { color: var(--neutral); }
+
+/* ── 유통정보 히어로 ──────────────────────────────────── */
+.distribution-hero {
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+  background: linear-gradient(135deg, var(--primary) 0%, #1a4a6e 100%);
+  border-radius: var(--radius-xl);
+  color: #fff;
+  margin-bottom: 2rem;
+}
+.distribution-hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-full);
+  padding: 0.3rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+.distribution-hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  margin-bottom: 0.75rem;
+}
+.distribution-hero p {
+  font-size: 1rem;
+  opacity: 0.85;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── 최신 가격 카드 ──────────────────────────────────── */
+.distribution-latest-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-md);
+}
+.distribution-latest-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+.distribution-latest-label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+.distribution-latest-header h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+.distribution-movers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.movers-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.mover-tag {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+/* ── 식자재가격압력지수 게이지 ────────────────────────── */
+.pressure-gauge-section {
+  margin: 2rem 0;
+}
+.pressure-gauge-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.75rem 0 0.35rem;
+  flex-wrap: wrap;
+}
+.pressure-gauge-track {
+  flex: 1;
+  min-width: 180px;
+  height: 20px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.pressure-gauge-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+.fill-warning  { background: linear-gradient(90deg, #f97316, #dc2626); }
+.fill-caution  { background: linear-gradient(90deg, #f59e0b, #f97316); }
+.fill-normal   { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.fill-good     { background: linear-gradient(90deg, #10b981, #059669); }
+
+.pressure-gauge-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 130px;
+}
+.pressure-score {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1;
+}
+.pressure-score small { font-size: 0.9rem; color: var(--text-muted); }
+.pressure-label-text {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+.pressure-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-light);
+  margin-top: 0.25rem;
+}
+
+/* 압력 배지 (카드/리스트용 소형) */
+.pressure-meter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  min-width: 90px;
+}
+.pressure-warning { background: #fef2f2; border: 1px solid #fecaca; }
+.pressure-caution { background: #fffbeb; border: 1px solid #fde68a; }
+.pressure-normal  { background: var(--accent-light); border: 1px solid #bfdbfe; }
+.pressure-good    { background: var(--secondary-light); border: 1px solid #a7f3d0; }
+.pressure-meter .pressure-value {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+.pressure-meter .pressure-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: center;
+  margin-top: 0.15rem;
+}
+
+/* ── 가격 경보 배너 ──────────────────────────────────── */
+.price-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin: 1rem 0;
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+.price-alert-warning  { background: #fef2f2; border-color: #dc2626; }
+.price-alert-caution  { background: #fffbeb; border-color: #f59e0b; }
+.price-alert-normal   { background: var(--bg-subtle); border-color: var(--accent); }
+.price-alert-favorable{ background: var(--secondary-light); border-color: var(--secondary); }
+
+.price-alert-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+.price-alert-content { flex: 1; }
+.price-alert-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.price-alert-message {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── 요약 통계 행 ────────────────────────────────────── */
+.market-stats-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+.market-stat {
+  flex: 1;
+  min-width: 100px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+.market-stat-value {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+.market-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── AI 코멘트 박스 ──────────────────────────────────── */
+.ai-comment-box {
+  background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.ai-comment-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.ai-comment-box p {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── 가격 테이블 ─────────────────────────────────────── */
+.price-tables-section { margin: 2rem 0; }
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+}
+.price-category-block { margin-bottom: 2rem; }
+.price-category-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.price-category-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1em;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.price-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.price-table thead tr {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+}
+.price-table th {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.price-table td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.price-table tbody tr:last-child td { border-bottom: none; }
+.price-table tbody tr:hover { background: var(--bg-subtle); }
+.price-item-name { font-weight: 700; color: var(--primary); }
+.price-unit { color: var(--text-muted); font-size: 0.82rem; }
+.price-value { font-weight: 700; font-variant-numeric: tabular-nums; }
+.price-change { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.price-market { font-size: 0.78rem; color: var(--text-light); }
+
+/* ── 시장 허브 카드 그리드 ───────────────────────────── */
+.market-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.market-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text);
+  text-align: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.market-category-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+.market-cat-icon { font-size: 2rem; }
+.market-category-card h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+.market-category-card p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── 가격 이력 리스트 ────────────────────────────────── */
+.market-history-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.market-history-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text);
+  transition: var(--transition);
+  flex-wrap: wrap;
+}
+.market-history-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.market-history-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 70px;
+  flex-shrink: 0;
+}
+.market-history-title {
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--text);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.market-history-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+.pressure-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+.chip-warning { background: #fef2f2; color: #dc2626; }
+.chip-good    { background: var(--secondary-light); color: var(--secondary); }
+.chip-normal  { background: var(--accent-light); color: var(--accent); }
+
+/* ── 유통정보 안내 박스 ──────────────────────────────── */
+.distribution-info-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+.distribution-info-box h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  color: var(--primary);
+}
+.distribution-info-box ul {
+  padding-left: 1.25rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.distribution-info-box li {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ── 인사이트 내 식자재 가격 스냅샷 ─────────────────── */
+.food-price-snapshot {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+}
+.food-price-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.65rem;
+}
+.food-price-mini-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.food-price-name  { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.food-price-val   { font-size: 1rem; font-weight: 800; color: var(--primary); }
+.food-price-change{ font-size: 0.78rem; font-weight: 700; }
+
+/* ── 반응형 ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .distribution-latest-header { flex-direction: column; }
+  .pressure-gauge-container { flex-direction: column; align-items: stretch; }
+  .pressure-gauge-info { align-items: flex-start; flex-direction: row; gap: 1rem; }
+  .market-stats-row { gap: 0.5rem; }
+  .market-stat { min-width: 80px; padding: 0.65rem 0.75rem; }
+  .market-hub-grid { grid-template-columns: repeat(2, 1fr); }
+  .price-table th, .price-table td { padding: 0.5rem 0.65rem; }
+  .market-history-title { white-space: normal; }
+}

@@ -53,5 +53,36 @@
     {{ $idx = add $idx 1 }}
     {{ end }}
   </div>
+
+  {{/* 독립 서브지수: 식자재가격압력지수 + 실질소비여력지수 */}}
+  {{ $suppLabels := dict
+    "food_price_pressure"    "식자재가격압력지수"
+    "consumer_spending_power" "실질소비여력지수"
+  }}
+  {{ $hasSupp := false }}
+  {{ range $k, $_ := $suppLabels }}
+    {{ if index $.Params.nci_scores $k }}{{ $hasSupp = true }}{{ end }}
+  {{ end }}
+  {{ if $hasSupp }}
+  <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
+    <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.75rem;">보조 지수</div>
+    {{ range $k, $label := $suppLabels }}
+    {{ $v := index $.Params.nci_scores $k }}
+    {{ if $v }}
+    {{ $isPressure := eq $k "food_price_pressure" }}
+    <div class="nci-gauge-row">
+      <div class="nci-gauge-label" style="font-size: 0.82rem;">{{ $label }}</div>
+      <div class="nci-gauge-track">
+        <div class="nci-gauge-fill" style="width:{{ $v }}%; background: {{ if $isPressure }}linear-gradient(90deg, #f59e0b, #dc2626){{ else }}linear-gradient(90deg, #059669, #047857){{ end }};"></div>
+      </div>
+      <div class="nci-gauge-val" style="color: {{ if $isPressure }}#dc2626{{ else }}#047857{{ end }};">{{ printf "%.0f" (float $v) }}</div>
+    </div>
+    {{ end }}
+    {{ end }}
+    <div style="font-size: 0.72rem; color: var(--text-light); margin-top: 0.5rem;">
+      식자재가격압력지수: 높을수록 원가 부담↑ &nbsp;|&nbsp; 실질소비여력지수: 높을수록 소비 여력↑
+    </div>
+  </div>
+  {{ end }}
 </div>
 {{ end }}

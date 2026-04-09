@@ -146,7 +146,8 @@ def main():
     parser = argparse.ArgumentParser(description='NeoSolution Content Pipeline')
     parser.add_argument('--date', type=str, default=None,
                         help='Target date YYYY-MM-DD (default: today KST)')
-    parser.add_argument('--content-type', choices=['weekly', 'monthly', 'guide', 'special'],
+    parser.add_argument('--content-type',
+                        choices=['weekly', 'monthly', 'guide', 'special', 'market-daily'],
                         default='weekly', help='Content type to generate')
     parser.add_argument('--collect-only', action='store_true',
                         help='Run collection phase only')
@@ -162,6 +163,11 @@ def main():
     logger.info(f"=== NeoSolution Pipeline Start ===")
     logger.info(f"  Date: {target_date}")
     logger.info(f"  Content Type: {args.content_type}")
+
+    # market-daily는 별도 파이프라인으로 처리
+    if args.content_type == 'market-daily':
+        _run_market_daily_pipeline(target_date, args.no_push)
+        return
 
     # Phase 1: Collection
     collected = run_collection(target_date, args.content_type)
@@ -187,6 +193,41 @@ def main():
 
     logger.info(f"=== Pipeline Complete ===")
     logger.info(f"  Published: {pub_result.get('published', False)}")
+
+
+def _run_market_daily_pipeline(date_str: str, no_push: bool):
+    """유통정보 일일 파이프라인 (market-daily 전용)"""
+    logger.info(f"=== Market Daily Pipeline ({date_str}) ===")
+
+    from pipeline.kamis_collector import KAMISCollector
+    from pipeline.market_analyzer import MarketAnalyzer
+    from pipeline.market_publisher import MarketPublisher
+
+    # Step 1: 가격 수집
+    logger.info("Step 1: KAMIS 가격 수집")
+    kamis_data = KAMISCollector().collect(date_str)
+
+    # Step 2: 분석 + AI 해설
+    logger.info("Step 2: 시장 분석")
+    analyzer = MarketAnalyzer()
+    analysis = analyzer.analyze(kamis_data, date_str)
+
+    # Step 3: Hugo 마크다운 발행
+    logger.info("Step 3: Hugo 페이지 발행")
+    publisher = MarketPublisher(SITE_DIR)
+    filepath = publisher.publish(analysis, date_str)
+    logger.info(f"  Published: {filepath}")
+
+    # Step 4: Git push
+    if not no_push and os.getenv('GITHUB_ACTIONS'):
+        _git_commit_and_push({
+            'published': True,
+            'date': date_str,
+            'content_type': 'market-daily',
+            'filepath': str(filepath),
+        })
+
+    logger.info("=== Market Daily Pipeline Complete ===")
 
 
 def _git_commit_and_push(pub_result: dict):

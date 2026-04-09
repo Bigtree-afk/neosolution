@@ -53,6 +53,38 @@
     {{ .Content }}
   </div>
 
+  {{/* Food Price Snapshot */}}
+  {{ with .Params.food_price_snapshot }}
+  <div class="food-price-snapshot">
+    <h2 class="section-title" style="font-size: 1rem;">이번 주 식자재 가격 동향</h2>
+    {{ with .price_pressure_signal }}
+    <div class="price-alert price-alert-{{ .level | default "normal" }}" style="margin-bottom: 1rem;">
+      <div class="price-alert-icon">{{ if eq .level "warning" }}🚨{{ else if eq .level "caution" }}⚠️{{ else }}📊{{ end }}</div>
+      <div class="price-alert-content">
+        <span class="price-alert-badge">식자재 원가 신호</span>
+        <p class="price-alert-message">{{ .message }}</p>
+      </div>
+    </div>
+    {{ end }}
+    {{ with .items }}
+    <div class="food-price-mini-grid">
+      {{ range . }}
+      <div class="food-price-mini-card">
+        <span class="food-price-name">{{ .name }}</span>
+        <span class="food-price-val">{{ .price }}</span>
+        <span class="food-price-change {{ if eq .direction "up" }}price-change-up{{ else if eq .direction "down" }}price-change-down{{ else }}price-change-neutral{{ end }}">
+          {{ if eq .direction "up" }}▲{{ else if eq .direction "down" }}▼{{ else }}→{{ end }}{{ .change }}
+        </span>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+    <div style="text-align: right; margin-top: 0.75rem;">
+      <a href="/distribution/" style="font-size: 0.8rem; color: var(--accent);">전체 유통정보 보기 →</a>
+    </div>
+  </div>
+  {{ end }}
+
   {{/* Predictions */}}
   {{ partial "prediction-cards.html" . }}
 
