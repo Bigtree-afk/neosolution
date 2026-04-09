@@ -17,16 +17,21 @@
             <th>품목</th>
             <th>단위</th>
             <th>도매가 (원)</th>
+            <th>산지가 (원)</th>
             <th>전일 대비</th>
             <th>시장</th>
           </tr>
         </thead>
         <tbody>
           {{ range .items }}
-          <tr>
-            <td class="price-item-name">{{ .name }}</td>
+          <tr class="price-row-clickable" onclick="openPriceChart('{{ .name }}')" title="{{ .name }} 가격 이력 보기">
+            <td class="price-item-name">
+              <span class="price-item-link">{{ .name }}</span>
+              <span class="price-chart-hint">📈</span>
+            </td>
             <td class="price-unit">{{ .unit }}</td>
             <td class="price-value">{{ .wholesale_price | lang.FormatNumber 0 }}</td>
+            <td class="price-value price-origin">{{ if .origin_price }}{{ .origin_price | lang.FormatNumber 0 }}{{ else }}-{{ end }}</td>
             <td class="price-change {{ if eq .change_direction "up" }}price-change-up{{ else if eq .change_direction "down" }}price-change-down{{ else }}price-change-neutral{{ end }}">
               {{ if eq .change_direction "up" }}▲{{ else if eq .change_direction "down" }}▼{{ else }}→{{ end }}
               {{ .change_pct | math.Abs | printf "%.1f" }}%

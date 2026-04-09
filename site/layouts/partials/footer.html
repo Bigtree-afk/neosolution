@@ -43,6 +43,7 @@
   </div>
 
   <div class="footer-bottom">
-    &copy; {{ now.Year }} {{ .Site.Params.company_name }}. All rights reserved.
+    &copy; {{ now.Year }} {{ .Site.Params.company_name }}{{ with .Site.Params.ceo }} 대표 {{ . }}{{ end }}
+    &nbsp;|&nbsp; {{ .Site.Params.address }}
   </div>
 </footer>

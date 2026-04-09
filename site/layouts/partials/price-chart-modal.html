@@ -1,0 +1,288 @@
+{{/* 품목별 가격 이력 차트 모달
+   사용: {{ partial "price-chart-modal.html" . }}
+   hugo.Data.prices (site/data/prices.json) 를 읽어
+   Chart.js로 일/주/월 탭 차트를 렌더링한다.
+   도매가(파랑) + 산지가(초록 점선) 이중선 표시.
+*/}}
+
+<!-- 차트 모달 오버레이 -->
+<div id="price-chart-overlay" class="chart-overlay" onclick="closePriceChart(event)">
+  <div class="chart-modal" onclick="event.stopPropagation()">
+    <div class="chart-modal-header">
+      <div>
+        <span id="chart-item-name" class="chart-item-name"></span>
+        <span id="chart-item-meta" class="chart-item-meta"></span>
+      </div>
+      <button class="chart-close-btn" onclick="closePriceChart()">&times;</button>
+    </div>
+
+    <!-- 탭 -->
+    <div class="chart-tabs">
+      <button class="chart-tab active" onclick="switchTab('daily', this)">일간 (30일)</button>
+      <button class="chart-tab" onclick="switchTab('weekly', this)">주간 (12주)</button>
+      <button class="chart-tab" onclick="switchTab('monthly', this)">월간 (12개월)</button>
+    </div>
+
+    <!-- 범례 -->
+    <div id="chart-legend" class="chart-legend">
+      <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#2563eb"></span>도매가</span>
+      <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16a34a"></span>산지가</span>
+    </div>
+
+    <!-- 차트 영역 -->
+    <div class="chart-canvas-wrap">
+      <canvas id="price-chart-canvas"></canvas>
+    </div>
+
+    <!-- 통계 요약 -->
+    <div id="chart-stats" class="chart-stats"></div>
+
+    <div class="chart-source-note">
+      출처: KAMIS 농산물유통정보 · 가락시장 도매가 기준
+    </div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script>
+// prices.json → Hugo가 빌드 시 인라인으로 포함
+const PRICE_DATA = (function() {
+  const raw = {{ hugo.Data.prices | jsonify | safeJS }};
+  return typeof raw === 'string' ? JSON.parse(raw) : (Array.isArray(raw) ? raw : Object.values(raw));
+})();
+
+let chartInstance = null;
+let currentSlug = null;
+let currentPeriod = 'daily';
+
+function openPriceChart(name) {
+  const decodedName = decodeURIComponent(name);
+  const item = (PRICE_DATA || []).find(p => p.name === decodedName);
+  if (!item) { alert('가격 데이터가 없습니다. (' + decodedName + ')'); return; }
+
+  currentSlug = item.slug;
+  currentPeriod = 'daily';
+
+  document.getElementById('chart-item-name').textContent = item.name;
+  document.getElementById('chart-item-meta').textContent =
+    ' (' + item.unit + ' / ' + item.market + ')';
+
+  // 탭 초기화
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.chart-tab')[0].classList.add('active');
+
+  document.getElementById('price-chart-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  renderChart(item, 'daily');
+}
+
+function closePriceChart(event) {
+  if (event && event.target !== document.getElementById('price-chart-overlay')) return;
+  _doClose();
+}
+function _doClose() {
+  document.getElementById('price-chart-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+}
+document.querySelector && document.addEventListener('DOMContentLoaded', function() {
+  document.querySelector('.chart-close-btn').addEventListener('click', _doClose);
+});
+
+function switchTab(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const item = (PRICE_DATA || []).find(p => p.slug === currentSlug);
+  if (item) renderChart(item, period);
+}
+
+function renderChart(item, period) {
+  const canvas = document.getElementById('price-chart-canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+  let labels = [], prices = [], originPrices = [], changes = [], weatherArr = [];
+  let hasOrigin = false;
+
+  if (period === 'daily') {
+    const data = (item.daily || []).slice(0, 30).reverse();
+    labels      = data.map(d => d.date.slice(5));   // MM-DD
+    prices      = data.map(d => d.price);
+    originPrices = data.map(d => d.origin_price || null);
+    changes     = data.map(d => d.change_pct);
+    weatherArr  = data.map(d => d.weather || null);
+    hasOrigin   = originPrices.some(v => v != null);
+  } else if (period === 'weekly') {
+    const data = (item.weekly || []).slice(0, 12).reverse();
+    labels = data.map(d => d.week.replace('-W', ' W'));
+    prices = data.map(d => d.avg);
+  } else {
+    const data = (item.monthly || []).slice(0, 12).reverse();
+    labels = data.map(d => d.month);
+    prices = data.map(d => d.avg);
+  }
+
+  // 도매가 포인트 색상: 전일 대비 방향
+  const pointColors = prices.map((p, i) => {
+    if (i === 0) return '#6b7280';
+    return p > prices[i - 1] ? '#dc2626' : p < prices[i - 1] ? '#16a34a' : '#6b7280';
+  });
+
+  const unit = item.unit;
+
+  const datasets = [
+    {
+      label: '도매가',
+      data: prices,
+      borderColor: '#2563eb',
+      backgroundColor: 'rgba(37,99,235,0.06)',
+      borderWidth: 2,
+      pointBackgroundColor: pointColors,
+      pointRadius: 4,
+      pointHoverRadius: 6,
+      fill: true,
+      tension: 0.3,
+      order: 1,
+    }
+  ];
+
+  // 산지가 라인 (일간 + 데이터 있을 때만)
+  if (hasOrigin && period === 'daily') {
+    datasets.push({
+      label: '산지가',
+      data: originPrices,
+      borderColor: '#16a34a',
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderDash: [5, 4],
+      pointBackgroundColor: '#16a34a',
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      fill: false,
+      tension: 0.3,
+      order: 2,
+    });
+  }
+
+  // 범례 표시/숨김
+  const legendEl = document.getElementById('chart-legend');
+  if (legendEl) legendEl.style.display = hasOrigin && period === 'daily' ? 'flex' : 'none';
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const val = ctx.parsed.y;
+              const prefix = ctx.dataset.label || item.name;
+              return prefix + ': ' + val.toLocaleString() + '원/' + unit;
+            },
+            afterLabel: (ctx) => {
+              // 도매가 데이터셋(index 0)에만 추가 정보 표시
+              if (ctx.datasetIndex !== 0) return [];
+              const lines = [];
+              if (period === 'daily' && changes.length > 0) {
+                const ch = changes[ctx.dataIndex];
+                const sign = ch > 0 ? '+' : '';
+                lines.push('전일 대비: ' + sign + ch + '%');
+              }
+              if (period === 'daily' && weatherArr.length > 0) {
+                const w = weatherArr[ctx.dataIndex];
+                if (w) {
+                  const icon = w.icon || '';
+                  const cond = w.condition || '';
+                  const hi = w.temp_max != null ? w.temp_max + '°C' : '';
+                  const lo = w.temp_min != null ? w.temp_min + '°C' : '';
+                  lines.push(icon + ' ' + cond + (hi ? '  최고 ' + hi : '') + (lo ? ' / 최저 ' + lo : ''));
+                }
+              }
+              return lines;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: {
+            callback: v => v.toLocaleString() + '원',
+            font: { size: 11 }
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        },
+        x: {
+          ticks: { font: { size: 11 }, maxRotation: 45 },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+
+  renderStats(item, period);
+}
+
+function renderStats(item, period) {
+  const statsEl = document.getElementById('chart-stats');
+  let data;
+
+  if (period === 'daily') {
+    const raw = (item.daily || []).slice(0, 30);
+    const prices = raw.map(d => d.price).filter(p => p > 0);
+    if (!prices.length) { statsEl.innerHTML = ''; return; }
+    data = {
+      latest: raw[0]?.price,
+      avg: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length),
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+      latestOrigin: raw[0]?.origin_price,
+    };
+  } else if (period === 'weekly') {
+    const raw = (item.weekly || []).slice(0, 12);
+    if (!raw.length) { statsEl.innerHTML = ''; return; }
+    data = {
+      latest: raw[0]?.avg,
+      avg: Math.round(raw.reduce((a, b) => a + b.avg, 0) / raw.length),
+      min: Math.min(...raw.map(d => d.min)),
+      max: Math.max(...raw.map(d => d.max)),
+    };
+  } else {
+    const raw = (item.monthly || []).slice(0, 12);
+    if (!raw.length) { statsEl.innerHTML = ''; return; }
+    data = {
+      latest: raw[0]?.avg,
+      avg: Math.round(raw.reduce((a, b) => a + b.avg, 0) / raw.length),
+      min: Math.min(...raw.map(d => d.min)),
+      max: Math.max(...raw.map(d => d.max)),
+    };
+  }
+
+  const fmt = v => v ? v.toLocaleString() + '원' : '-';
+  let html =
+    '<div class="chart-stat-item"><span class="chart-stat-label">현재가(도매)</span><span class="chart-stat-val">' + fmt(data.latest) + '</span></div>' +
+    '<div class="chart-stat-item"><span class="chart-stat-label">30일 평균</span><span class="chart-stat-val">' + fmt(data.avg) + '</span></div>' +
+    '<div class="chart-stat-item"><span class="chart-stat-label">최저</span><span class="chart-stat-val price-change-down">' + fmt(data.min) + '</span></div>' +
+    '<div class="chart-stat-item"><span class="chart-stat-label">최고</span><span class="chart-stat-val price-change-up">' + fmt(data.max) + '</span></div>';
+
+  if (data.latestOrigin) {
+    html += '<div class="chart-stat-item"><span class="chart-stat-label">산지가</span><span class="chart-stat-val" style="color:#16a34a">' + fmt(data.latestOrigin) + '</span></div>';
+  }
+
+  statsEl.innerHTML = html;
+}
+
+// ESC 키로 닫기
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') _doClose();
+});
+</script>

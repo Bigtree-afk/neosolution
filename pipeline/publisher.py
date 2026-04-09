@@ -103,6 +103,12 @@ class HugoPublisher:
         if 'tomorrow_signals' in post:
             fm['tomorrow_signals'] = post['tomorrow_signals']
 
+        # Opus 분석 결과 필드 (있으면 포함)
+        for field in ['macro_context', 'cross_sector_dynamics',
+                      'food_price_snapshot', 'seasonal_context']:
+            if field in post:
+                fm[field] = post[field]
+
         # 차트 이미지 (있으면 포함)
         if 'chart_images' in post:
             fm['chart_images'] = post['chart_images']

@@ -69,8 +69,7 @@ a:hover { color: var(--accent); }
 
 /* ── Header & Nav ───────────────────────────────────────── */
 header {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   background: var(--primary);
   box-shadow: 0 2px 12px rgba(0,0,0,.2);
@@ -1384,4 +1383,222 @@ footer {
   .market-hub-grid { grid-template-columns: repeat(2, 1fr); }
   .price-table th, .price-table td { padding: 0.5rem 0.65rem; }
   .market-history-title { white-space: normal; }
+}
+
+/* ── 날씨 배지 ───────────────────────────────────────── */
+.weather-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+.weather-icon { font-size: 1.1rem; }
+.weather-condition { font-weight: 600; color: var(--primary); }
+.weather-temp { color: var(--text-muted); }
+.weather-temp-min { color: #3b82f6; }
+.weather-precip { color: #2563eb; font-weight: 600; }
+.weather-label { font-size: 0.72rem; color: var(--text-light); border-left: 1px solid var(--border); padding-left: 0.5rem; }
+
+/* ── 가격 테이블 클릭 행 ─────────────────────────────── */
+.price-row-clickable { cursor: pointer; transition: background 0.15s; }
+.price-row-clickable:hover { background: var(--accent-light); }
+.price-item-link { font-weight: 600; }
+.price-chart-hint {
+  font-size: 0.75rem;
+  opacity: 0;
+  margin-left: 0.3rem;
+  transition: opacity 0.15s;
+}
+.price-row-clickable:hover .price-chart-hint { opacity: 1; }
+
+/* ── 차트 모달 ───────────────────────────────────────── */
+.chart-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.chart-overlay.open { display: flex; }
+
+.chart-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chart-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.chart-item-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.chart-item-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.chart-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+.chart-close-btn:hover { background: var(--bg-subtle); color: var(--primary); }
+
+/* 탭 */
+.chart-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+.chart-tab {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.chart-tab:hover { color: var(--accent); }
+.chart-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* 캔버스 */
+.chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 240px;
+}
+.chart-canvas-wrap canvas { width: 100% !important; height: 100% !important; }
+
+/* 통계 요약 */
+.chart-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.chart-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.65rem 0.5rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+.chart-stat-label { font-size: 0.72rem; color: var(--text-muted); }
+.chart-stat-val { font-size: 0.92rem; font-weight: 700; color: var(--primary); }
+
+.chart-source-note {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .chart-modal { padding: 1rem; }
+  .chart-stats { grid-template-columns: repeat(2, 1fr); }
+  .chart-tab { padding: 0.4rem 0.65rem; font-size: 0.78rem; }
+  .chart-canvas-wrap { height: 180px; }
+}
+
+/* ── 차트 범례 (도매가 / 산지가) ─────────────────────────── */
+.chart-legend {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.3rem 0.5rem 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.chart-legend-item { display: flex; align-items: center; gap: 0.35rem; }
+.chart-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* 산지가 컬럼 */
+.price-origin { color: #16a34a; font-weight: 600; }
+
+/* 통계 요약 5개일 때 */
+.chart-stats:has(.chart-stat-item:nth-child(5)) {
+  grid-template-columns: repeat(5, 1fr);
+}
+@media (max-width: 480px) {
+  .chart-stats:has(.chart-stat-item:nth-child(5)) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── 인사이트 목록 ──────────────────────────────────────── */
+.insight-hero-card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, border-left-color 0.2s;
+  margin-bottom: 2rem;
+}
+.insight-hero-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.filter-btn {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.filter-btn:hover {
+  background: var(--border);
+  color: var(--primary);
+}
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }

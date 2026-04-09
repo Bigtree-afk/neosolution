@@ -55,6 +55,7 @@ class MarketPublisher:
 
         summary = analysis.get('market_summary', {})
         alert = analysis.get('price_alert', {})
+        weather = analysis.get('weather', {})
 
         fm = {
             'title': f"{date_str} ({weekday}) 가락시장 주요 가격 동향",
@@ -63,6 +64,13 @@ class MarketPublisher:
             'description': alert.get('message', '오늘의 가락시장 농산물 가격 동향'),
             'content_type': 'market-daily',
             'draft': False,
+            'weather': {
+                'condition': weather.get('condition', '정보 없음'),
+                'condition_icon': weather.get('condition_icon', '—'),
+                'temp_max': weather.get('temp_max'),
+                'temp_min': weather.get('temp_min'),
+                'precipitation': weather.get('precipitation'),
+            },
             'market_summary': {
                 'price_up_count': summary.get('price_up_count', 0),
                 'price_down_count': summary.get('price_down_count', 0),

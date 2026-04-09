@@ -1,0 +1,166 @@
+{{ define "main" }}
+
+{{/* ── 모든 인사이트 페이지 수집 ─────────────────── */}}
+{{ $allPages := .RegularPagesRecursive.ByDate.Reverse }}
+{{ $latest   := index $allPages 0 }}
+{{ $weekly   := where $allPages "Params.content_type" "weekly-trend" }}
+{{ $monthly  := where $allPages "Params.content_type" "monthly-trend" }}
+{{ $special  := where $allPages "Params.content_type" "special" }}
+
+{{/* ── 섹션 헤더 ──────────────────────────────── */}}
+<div style="margin-bottom: 2rem;">
+  <h1 style="font-size: 1.75rem; font-weight: 900; margin-bottom: 0.4rem; color: var(--primary);">인사이트</h1>
+  <p style="font-size: 0.95rem; color: var(--text-muted); margin: 0;">AI 기반 소비 트렌드 분석과 업종별 시장 전망</p>
+</div>
+
+{{/* ── 태그 필터 버튼 ──────────────────────────── */}}
+<div id="tag-filters" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+  <button class="filter-btn active" data-tag="all" onclick="filterCards(this, 'all')">전체</button>
+  <button class="filter-btn" data-tag="외식업" onclick="filterCards(this, '외식업')">외식업</button>
+  <button class="filter-btn" data-tag="유통" onclick="filterCards(this, '유통')">유통</button>
+  <button class="filter-btn" data-tag="소비트렌드" onclick="filterCards(this, '소비트렌드')">소비트렌드</button>
+  <button class="filter-btn" data-tag="식자재" onclick="filterCards(this, '식자재')">식자재</button>
+</div>
+
+{{/* ── 최신 리포트 히어로 카드 ─────────────────── */}}
+{{ with $latest }}
+<a href="{{ .Permalink }}" id="hero-card" class="insight-hero-card" data-tags="{{ delimit .Params.tags "," }}">
+  <div style="display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: start;">
+    <div>
+      <div style="margin-bottom: 0.6rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <span style="background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;">최신</span>
+        {{ with .Params.categories }}{{ range . }}<span class="tag tag-accent">{{ . }}</span>{{ end }}{{ end }}
+        <span style="font-size: 0.78rem; color: var(--text-muted);">{{ .Date.Format "2006.01.02" }}</span>
+      </div>
+      <h2 style="font-size: 1.4rem; font-weight: 900; line-height: 1.35; margin-bottom: 0.6rem; color: var(--primary);">{{ .Title }}</h2>
+      {{ with .Description }}
+      <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; margin: 0 0 0.75rem;">{{ . }}</p>
+      {{ end }}
+      {{ with .Params.tags }}
+      <div>{{ range first 4 . }}<span class="tag">{{ . }}</span> {{ end }}</div>
+      {{ end }}
+    </div>
+    {{ with .Params.nci_scores }}
+    <div style="text-align: center; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; min-width: 90px; flex-shrink: 0;">
+      <div style="font-size: 2.2rem; font-weight: 900; line-height: 1; color: {{ if ge (.overall | float) 65.0 }}#16a34a{{ else if ge (.overall | float) 50.0 }}#2563eb{{ else }}#f59e0b{{ end }};">{{ .overall }}</div>
+      <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600; margin-top: 0.25rem;">NCI</div>
+    </div>
+    {{ end }}
+  </div>
+</a>
+{{ end }}
+
+{{/* ── 주간 리포트 섹션 ─────────────────────────── */}}
+{{ if $weekly }}
+<div class="insights-section" id="section-weekly">
+  <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; margin-top: 2.5rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--border);">
+    <span style="background: #2563eb; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;">주간</span>
+    <h2 style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--primary);">주간 소비 트렌드</h2>
+    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;">{{ len $weekly }}개</span>
+  </div>
+  <div class="card-grid" id="weekly-grid">
+    {{ range $weekly }}
+    <a href="{{ .Permalink }}" class="card insight-card filterable" data-tags="{{ delimit .Params.tags "," }}">
+      <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+      <div class="card-title">{{ .Title }}</div>
+      <div class="card-desc">{{ .Description }}</div>
+      {{ with .Params.nci_scores }}
+      <div style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border); display: flex; gap: 1rem; font-size: 0.78rem;">
+        <span style="color: var(--text-muted);">NCI <strong style="color: var(--primary);">{{ .overall }}</strong></span>
+        <span style="color: var(--text-muted);">외식 <strong style="color: #16a34a;">{{ .restaurant }}</strong></span>
+      </div>
+      {{ end }}
+      {{ with .Params.tags }}
+      <div class="card-tags">{{ range first 3 . }}<span class="tag">{{ . }}</span>{{ end }}</div>
+      {{ end }}
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{/* ── 월간 리포트 섹션 ─────────────────────────── */}}
+{{ if $monthly }}
+<div class="insights-section" id="section-monthly">
+  <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; margin-top: 2.5rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--border);">
+    <span style="background: #7c3aed; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;">월간</span>
+    <h2 style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--primary);">월간 시장 분석</h2>
+    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;">{{ len $monthly }}개</span>
+  </div>
+  <div class="card-grid" id="monthly-grid">
+    {{ range $monthly }}
+    <a href="{{ .Permalink }}" class="card insight-card filterable" data-tags="{{ delimit .Params.tags "," }}">
+      <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+      <div class="card-title">{{ .Title }}</div>
+      <div class="card-desc">{{ .Description }}</div>
+      {{ with .Params.tags }}
+      <div class="card-tags">{{ range first 3 . }}<span class="tag">{{ . }}</span>{{ end }}</div>
+      {{ end }}
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{/* ── 특별 리포트 섹션 ─────────────────────────── */}}
+{{ if $special }}
+<div class="insights-section" id="section-special">
+  <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; margin-top: 2.5rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--border);">
+    <span style="background: #b45309; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px;">특별</span>
+    <h2 style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--primary);">특별 분석</h2>
+    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: auto;">{{ len $special }}개</span>
+  </div>
+  <div class="card-grid" id="special-grid">
+    {{ range $special }}
+    <a href="{{ .Permalink }}" class="card insight-card filterable" data-tags="{{ delimit .Params.tags "," }}">
+      <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+      <div class="card-title">{{ .Title }}</div>
+      <div class="card-desc">{{ .Description }}</div>
+      {{ with .Params.tags }}
+      <div class="card-tags">{{ range first 3 . }}<span class="tag">{{ . }}</span>{{ end }}</div>
+      {{ end }}
+    </a>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+{{/* 콘텐츠 없는 경우 */}}
+{{ if not $allPages }}
+<div style="text-align: center; padding: 4rem 0; color: var(--text-muted);">
+  <p style="font-size: 1rem; margin-bottom: 0.5rem;">아직 등록된 인사이트가 없습니다.</p>
+  <p style="font-size: 0.85rem;">매주 월요일 오전 자동으로 업데이트됩니다.</p>
+</div>
+{{ end }}
+
+{{/* ── 태그 필터 스크립트 ──────────────────────── */}}
+<script>
+function filterCards(btn, tag) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const hero = document.getElementById('hero-card');
+  const cards = document.querySelectorAll('.filterable');
+
+  if (tag === 'all') {
+    if (hero) hero.style.display = '';
+    cards.forEach(c => { c.style.display = ''; });
+    document.querySelectorAll('.insights-section').forEach(s => s.style.display = '');
+  } else {
+    if (hero) {
+      const heroTags = (hero.dataset.tags || '').toLowerCase();
+      hero.style.display = heroTags.includes(tag.toLowerCase()) ? '' : 'none';
+    }
+    cards.forEach(c => {
+      const cardTags = (c.dataset.tags || '').toLowerCase();
+      c.style.display = cardTags.includes(tag.toLowerCase()) ? '' : 'none';
+    });
+    document.querySelectorAll('.insights-section').forEach(s => {
+      const visible = s.querySelectorAll('.filterable:not([style*="display: none"])').length;
+      s.style.display = visible > 0 ? '' : 'none';
+    });
+  }
+}
+</script>
+
+{{ end }}

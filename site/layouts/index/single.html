@@ -1,0 +1,179 @@
+{{ define "main" }}
+
+<article class="editorial-post">
+
+  {{/* ── 대시보드 헤더 ─────────────────────────────────── */}}
+  <header style="margin-bottom: 2rem; padding: 1.75rem 2rem; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); border-radius: var(--radius-md); color: #fff;">
+    <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+      <div>
+        <span style="display: inline-block; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px; letter-spacing: 0.04em;">NCI</span>
+        <span style="display: inline-block; background: rgba(255,255,255,0.15); color: #e2e8f0; font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.65rem; border-radius: 999px; margin-left: 0.4rem;">ISI</span>
+      </div>
+      <span style="font-size: 0.78rem; color: #94a3b8;">{{ .Date.Format "2006.01.02" }} 기준</span>
+    </div>
+    <h1 style="font-size: 1.6rem; font-weight: 900; line-height: 1.3; margin-bottom: 0.5rem; color: #fff;">{{ .Title }}</h1>
+    {{ with .Description }}
+    <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; margin: 0; border-left: 3px solid var(--accent); padding-left: 0.75rem;">{{ . }}</p>
+    {{ end }}
+  </header>
+
+  {{/* ── NCI 종합 스코어 카드 ──────────────────────────── */}}
+  {{ with .Params.nci_scores }}
+  {{ $overall := .overall | default 50 }}
+  <div style="display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem 2rem; margin-bottom: 1.5rem;">
+    <div style="text-align: center;">
+      <div style="font-size: 3.5rem; font-weight: 900; line-height: 1; color: {{ if ge ($overall | float) 65.0 }}#16a34a{{ else if ge ($overall | float) 50.0 }}#2563eb{{ else if ge ($overall | float) 35.0 }}#f59e0b{{ else }}#dc2626{{ end }};">
+        {{ printf "%.0f" (float $overall) }}
+      </div>
+      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-top: 0.25rem;">종합 NCI</div>
+    </div>
+    <div>
+      <div style="font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.4rem;">
+        {{ if ge ($overall | float) 65.0 }}호황 — 소비 확장세
+        {{ else if ge ($overall | float) 50.0 }}보통 — 소비 안정세
+        {{ else if ge ($overall | float) 35.0 }}주의 — 소비 둔화
+        {{ else }}침체 — 소비 위축
+        {{ end }}
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5;">
+        0~100 범위의 종합 소비 강도 지수. 70 이상 호황, 50 보통, 30 이하 침체로 해석합니다.
+        BOK 소비자심리지수, KOSIS 소매판매액지수, 뉴스 감성지수를 가중 합산해 산출합니다.
+      </p>
+    </div>
+  </div>
+  {{ end }}
+
+  {{/* ── NCI 게이지 ────────────────────────────────────── */}}
+  {{ partial "nci-gauge.html" . }}
+
+  {{/* ── ISI 업종별 지수 ────────────────────────────────── */}}
+  {{ partial "isi-bars.html" . }}
+
+  {{/* ── NCI 트렌드 차트 (12주) ────────────────────────── */}}
+  {{ with .Params.nci_history }}
+  <div class="nci-section" style="margin-top: 2rem;">
+    <div class="nci-header">
+      <span class="nci-label">NCI 트렌드</span>
+      <span class="nci-hint">최근 12주</span>
+    </div>
+    <div class="nci-title">주간 소비지수 추이</div>
+    <div style="position: relative; height: 240px; margin-top: 1rem;">
+      <canvas id="nci-trend-chart"></canvas>
+    </div>
+
+    {{/* 트렌드 히스토리 테이블 */}}
+    <div style="overflow-x: auto; margin-top: 1.5rem;">
+      <table class="price-table" style="font-size: 0.82rem;">
+        <thead>
+          <tr>
+            <th>주차</th>
+            <th style="text-align:right;">종합</th>
+            <th style="text-align:right;">외식업</th>
+            <th style="text-align:right;">유통/소매</th>
+            <th style="text-align:right;">식자재유통</th>
+            <th style="text-align:right;">전주 대비</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $i, $row := . }}
+          {{ $prev := index ($.Params.nci_history) (add $i 1) }}
+          {{ $diff := 0.0 }}
+          {{ if $prev }}{{ $diff = sub (float $row.overall) (float $prev.overall) }}{{ end }}
+          <tr>
+            <td>{{ $row.label }}</td>
+            <td style="text-align:right; font-weight:700; color:{{ if ge ($row.overall | float) 60.0 }}#16a34a{{ else if lt ($row.overall | float) 50.0 }}#dc2626{{ else }}var(--primary){{ end }};">
+              {{ printf "%.0f" (float $row.overall) }}
+            </td>
+            <td style="text-align:right;">{{ printf "%.0f" (float $row.restaurant) }}</td>
+            <td style="text-align:right;">{{ printf "%.0f" (float $row.retail) }}</td>
+            <td style="text-align:right;">{{ printf "%.0f" (float $row.food_mart) }}</td>
+            <td style="text-align:right;" class="{{ if gt $diff 0.0 }}price-change-up{{ else if lt $diff 0.0 }}price-change-down{{ else }}price-change-neutral{{ end }}">
+              {{ if $prev }}{{ if gt $diff 0.0 }}▲{{ else if lt $diff 0.0 }}▼{{ else }}→{{ end }} {{ printf "%.1f" ($diff | math.Abs) }}{{ else }}—{{ end }}
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {{/* Chart.js 트렌드 */}}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script>
+  (function() {
+    const history = {{ . | jsonify | safeJS }};
+    const reversed = [...history].reverse();
+    const labels   = reversed.map(r => r.label);
+    const overall  = reversed.map(r => r.overall);
+    const rest     = reversed.map(r => r.restaurant);
+    const retail   = reversed.map(r => r.retail);
+    const fm       = reversed.map(r => r.food_mart);
+
+    new Chart(document.getElementById('nci-trend-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: '종합 NCI',   data: overall, borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.08)', borderWidth: 2.5, pointRadius: 4, fill: true, tension: 0.35 },
+          { label: '외식업',     data: rest,    borderColor: '#16a34a', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.35 },
+          { label: '유통/소매',  data: retail,  borderColor: '#8b5cf6', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.35 },
+          { label: '식자재유통', data: fm,      borderColor: '#f59e0b', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.35 },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+          tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y } }
+        },
+        scales: {
+          y: { min: 30, max: 90, ticks: { font: { size: 11 }, stepSize: 10 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+        }
+      }
+    });
+  })();
+  </script>
+  {{ end }}
+
+  {{/* ── 지수 해설 ────────────────────────────────────── */}}
+  <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-subtle); border-radius: var(--radius-md); border: 1px solid var(--border);">
+    <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary);">지수 산출 방법</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.83rem; color: var(--text-muted); line-height: 1.6;">
+      <div>
+        <strong style="color: var(--primary);">NCI (네오 소비지수)</strong><br>
+        BOK 소비자심리지수 30% + KOSIS 소매판매액지수 35% + 서비스업생산지수 20% + 뉴스 감성 15%를 합산해 0~100으로 정규화합니다.
+      </div>
+      <div>
+        <strong style="color: var(--primary);">ISI (업종별 경기체감지수)</strong><br>
+        업종 키워드 뉴스 감성 30% + 통계 지표 70%를 기반으로 기준점 50에서 업·하향 조정합니다. 50 초과 확장, 50 미만 위축을 의미합니다.
+      </div>
+    </div>
+    <p style="font-size: 0.78rem; color: var(--text-light); margin: 1rem 0 0; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+      ※ 본 지수는 공개 통계 데이터와 AI 분석을 기반으로 자동 산출됩니다. 투자·사업 자문으로 활용할 수 없습니다.
+      데이터 출처: 한국은행 ECOS, 통계청 KOSIS, KAMIS 농산물유통정보
+    </p>
+  </div>
+
+  {{/* ── 최신 인사이트 링크 ─────────────────────────────── */}}
+  <div style="margin-top: 2rem;">
+    <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary);">최신 주간 인사이트</h3>
+    <div class="card-grid">
+      {{ range first 3 (where site.RegularPages "Section" "insights") }}
+      <a href="{{ .Permalink }}" class="card insight-card">
+        <div class="card-date">{{ .Date.Format "2006.01.02" }}</div>
+        <div class="card-title">{{ .Title }}</div>
+        <div class="card-desc">{{ .Description }}</div>
+      </a>
+      {{ end }}
+    </div>
+    <p style="text-align: center; margin-top: 1rem;">
+      <a href="/insights/" style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">전체 인사이트 보기 →</a>
+    </p>
+  </div>
+
+</article>
+
+{{ end }}

@@ -1,0 +1,70 @@
+당신은 한국 소비 시장 데이터 전문가입니다.
+
+이것은 **2단계 분석 중 1단계**입니다. 아래 원데이터를 훑어보고, 이번 주 분석에서 **가장 중요하게 다뤄야 할 포커스**를 결정하세요.
+
+---
+
+## 분석 날짜
+{date}
+
+---
+
+## 통계 원데이터 (이번 주 입력값)
+
+```json
+{stats_summary}
+```
+
+## 산출된 NCI / ISI
+
+NCI: {nci_scores}
+ISI: {isi_scores}
+
+## 뉴스 감성 집계
+
+{news_sentiment_table}
+
+## 주요 뉴스 헤드라인 (30건)
+
+{news_headlines}
+
+---
+
+## 수행 과제
+
+위 데이터를 빠르게 스캔하여 다음을 JSON으로 출력하세요:
+
+```json
+{{
+  "week_character": "이번 주를 한 단어/구로 표현 (예: '봄 소비 회복기', '물가 부담 우위', '양극화 심화')",
+
+  "top_signals": [
+    {{
+      "signal": "가장 주목해야 할 신호 1",
+      "data_evidence": "근거 수치 또는 뉴스 (구체적)",
+      "implication": "소비 시장에 미치는 영향"
+    }},
+    {{
+      "signal": "주목 신호 2",
+      "data_evidence": "근거",
+      "implication": "영향"
+    }},
+    {{
+      "signal": "주목 신호 3",
+      "data_evidence": "근거",
+      "implication": "영향"
+    }}
+  ],
+
+  "focus_sectors": ["이번 주 분석에서 특히 집중할 업종 1", "업종 2"],
+
+  "analysis_angle": "이번 주 분석의 핵심 각도/프레임 (예: '원가 압박 vs 소비 회복의 긴장', '봄 시즌 업종별 수혜 차별화')",
+
+  "data_gaps": ["신뢰도를 낮추는 데이터 부재 또는 불확실 요소 1", "요소 2"],
+
+  "confidence_level": "high|medium|low",
+  "confidence_reason": "신뢰도 판단 근거 (데이터 충분성, 뉴스 일관성 등)"
+}}
+```
+
+JSON만 출력하세요.

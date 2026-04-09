@@ -16,11 +16,12 @@ cleanDestinationDir = true
 [params]
   author = 'NeoSolution'
   tagline = '데이터로 읽는 소비 트렌드'
-  company_name = '네오솔루션'
+  company_name = '(주)네오솔루션'
   company_name_en = 'NeoSolution'
+  ceo = '정치은'
   phone = '1588-0000'
   email = 'info@neosolution.co.kr'
-  address = '서울특별시 강남구'
+  address = '경기도 남양주시 별내중앙로26, 1002호-389호'
   # GA4 측정 ID
   ga4_id = ''
   # Google Search Console

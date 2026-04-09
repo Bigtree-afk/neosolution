@@ -2,58 +2,70 @@
 
 <article class="editorial-post">
 
-  {{/* Masthead */}}
-  <div style="background: var(--bg-subtle); border-bottom: 1px solid var(--border); padding: 0.5rem 0; margin: -2rem -1.5rem 2rem; text-align: center;">
-    <div style="max-width: var(--content-width); margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; font-size: 0.78rem; color: var(--text-muted); flex-wrap: wrap;">
-      <span style="font-weight: 700; color: var(--accent);">NeoSolution</span>
-      <span>&middot;</span>
-      <span>데이터로 읽는 소비 트렌드</span>
-      <span>&middot;</span>
-      <span>{{ .Date.Format "2006.01.02" }}</span>
-    </div>
-  </div>
-
-  {{/* Hero */}}
-  <header style="margin-bottom: 2rem;">
-    {{ with .Params.categories }}
-    <div style="margin-bottom: 0.5rem;">
-      {{ range . }}<span class="tag tag-accent">{{ . }}</span> {{ end }}
-    </div>
-    {{ end }}
-
-    <h1 style="font-size: 1.8rem; font-weight: 900; line-height: 1.3; margin-bottom: 0.75rem;">{{ .Title }}</h1>
-
-    {{ with .Description }}
-    <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">{{ . }}</p>
-    {{ end }}
-
-    <div style="font-size: 0.82rem; color: var(--text-light); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-      <span>{{ .Date.Format "2006년 01월 02일" }}</span>
-      {{ with .ReadingTime }}<span>~{{ . }}분 읽기</span>{{ end }}
-      {{ with .Params.tags }}
-      {{ range . }}<span class="tag">{{ . }}</span>{{ end }}
+  {{/* ── 다크 헤더 ──────────────────────────────────────── */}}
+  <header style="margin-bottom: 2rem; padding: 1.75rem 2rem; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); border-radius: var(--radius-md); color: #fff;">
+    <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+      {{ with .Params.categories }}
+      {{ range . }}<span style="display: inline-block; background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 999px; letter-spacing: 0.04em;">{{ . }}</span>{{ end }}
       {{ end }}
+      <span style="font-size: 0.78rem; color: #94a3b8;">{{ .Date.Format "2006.01.02" }}</span>
+      {{ with .ReadingTime }}<span style="font-size: 0.78rem; color: #94a3b8;">· ~{{ . }}분</span>{{ end }}
     </div>
+    <h1 style="font-size: 1.65rem; font-weight: 900; line-height: 1.3; margin-bottom: 0.6rem; color: #fff;">{{ .Title }}</h1>
+    {{ with .Description }}
+    <p style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.55; margin: 0; border-left: 3px solid var(--accent); padding-left: 0.75rem;">{{ . }}</p>
+    {{ end }}
   </header>
 
-  {{/* Key Numbers */}}
+  {{/* ── 핵심 숫자 카드 ────────────────────────────────── */}}
   {{ partial "key-numbers.html" . }}
 
-  {{/* NCI Gauge */}}
+  {{/* ── NCI 게이지 + ISI 바 ──────────────────────────── */}}
   {{ partial "nci-gauge.html" . }}
-
-  {{/* ISI Bars */}}
   {{ partial "isi-bars.html" . }}
 
-  {{/* Insight Box */}}
+  {{/* ── 매크로 컨텍스트 (Opus 분석 결과) ─────────────── */}}
+  {{ with .Params.macro_context }}
+  <div class="nci-section" style="margin-top: 2rem;">
+    <div class="nci-header">
+      <span class="nci-label">거시 소비 환경</span>
+    </div>
+    <div class="nci-title">{{ .overall_verdict }}</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.55;">
+      <div>
+        <strong style="color: var(--primary);">소비자심리</strong><br>
+        {{ .csi_reading }}
+      </div>
+      <div>
+        <strong style="color: var(--primary);">소매판매</strong><br>
+        {{ .retail_trend }}
+      </div>
+      {{ with .service_trend }}
+      <div style="grid-column: 1 / -1;">
+        <strong style="color: var(--primary);">서비스 생산</strong><br>
+        {{ . }}
+      </div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
+
+  {{/* ── 핵심 인사이트 박스 ────────────────────────────── */}}
   {{ partial "insight-box.html" . }}
 
-  {{/* Article Body */}}
-  <div class="editorial-content">
-    {{ .Content }}
+  {{/* ── 교차 영향 분석 (Opus 분석 결과) ──────────────── */}}
+  {{ with .Params.cross_sector_dynamics }}
+  <div style="margin: 1.5rem 0; padding: 1.25rem 1.5rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-md);">
+    <div style="font-size: 0.82rem; font-weight: 700; color: #92400e; margin-bottom: 0.6rem;">업종 간 교차 영향</div>
+    <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.85rem; color: #78350f; line-height: 1.6;">
+      {{ range . }}
+      <li>{{ . }}</li>
+      {{ end }}
+    </ul>
   </div>
+  {{ end }}
 
-  {{/* Food Price Snapshot */}}
+  {{/* ── 식자재 가격 스냅샷 ────────────────────────────── */}}
   {{ with .Params.food_price_snapshot }}
   <div class="food-price-snapshot">
     <h2 class="section-title" style="font-size: 1rem;">이번 주 식자재 가격 동향</h2>
@@ -85,32 +97,37 @@
   </div>
   {{ end }}
 
-  {{/* Predictions */}}
+  {{/* ── 본문 ──────────────────────────────────────────── */}}
+  <div class="editorial-content" style="margin-top: 2rem;">
+    {{ .Content }}
+  </div>
+
+  {{/* ── 예측 카드 ─────────────────────────────────────── */}}
   {{ partial "prediction-cards.html" . }}
 
-  {{/* Tomorrow Signals */}}
+  {{/* ── 다음 주 시그널 ────────────────────────────────── */}}
   {{ partial "tomorrow-signals.html" . }}
 
-  {{/* Charts */}}
-  {{ with .Params.chart_images }}
-  <div style="margin: 2rem 0;">
-    {{ range . }}
-    <img src="{{ . }}" alt="차트" style="border-radius: var(--radius-md); margin-bottom: 1rem;">
-    {{ end }}
+  {{/* ── 소비지수 대시보드 링크 ────────────────────────── */}}
+  <div style="margin: 2rem 0; padding: 1.25rem 1.5rem; background: var(--bg-subtle); border: 1px solid var(--border); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+    <div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.2rem;">소비지수 대시보드</div>
+      <div style="font-size: 0.78rem; color: var(--text-muted);">NCI/ISI 전체 현황과 12주 추이를 확인하세요</div>
+    </div>
+    <a href="/index/neo-consumption/" class="btn btn-outline" style="font-size: 0.82rem; color: var(--accent); border-color: var(--accent);">대시보드 보기 →</a>
   </div>
-  {{ end }}
 
-  {{/* Share */}}
+  {{/* ── 공유 버튼 ─────────────────────────────────────── */}}
   {{ partial "share-buttons.html" . }}
 
-  {{/* Disclaimer */}}
+  {{/* ── 면책 ──────────────────────────────────────────── */}}
   <div class="disclaimer">
     본 콘텐츠는 정보 제공 목적으로 작성되었으며, 투자 권유나 사업 자문을 구성하지 않습니다.
-    네오 소비지수(NCI)와 업종별 경기체감지수(ISI)는 공공 통계 데이터와 AI 분석에 기반한 참고 지표이며,
-    실제 시장 상황과 차이가 있을 수 있습니다.
+    NCI·ISI는 공공 통계 데이터와 AI 분석에 기반한 참고 지표입니다.
+    데이터 출처: 한국은행 ECOS, 통계청 KOSIS, KAMIS 농산물유통정보
   </div>
 
-  {{/* CTA + Newsletter */}}
+  {{/* ── CTA ────────────────────────────────────────────── */}}
   {{ partial "cta-contact.html" . }}
   {{ partial "newsletter-signup.html" . }}
 

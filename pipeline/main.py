@@ -200,17 +200,30 @@ def _run_market_daily_pipeline(date_str: str, no_push: bool):
     logger.info(f"=== Market Daily Pipeline ({date_str}) ===")
 
     from pipeline.kamis_collector import KAMISCollector
+    from pipeline.weather_collector import WeatherCollector
+    from pipeline.price_history import update as update_price_history
     from pipeline.market_analyzer import MarketAnalyzer
     from pipeline.market_publisher import MarketPublisher
 
-    # Step 1: 가격 수집
+    # Step 1: 가격 + 날씨 수집 (병렬 가능하지만 순차로)
     logger.info("Step 1: KAMIS 가격 수집")
     kamis_data = KAMISCollector().collect(date_str)
+
+    logger.info("Step 1b: 날씨 수집")
+    weather_data = WeatherCollector().collect(date_str)
+
+    # Step 1c: 가격 이력 업데이트 (site/data/prices.json)
+    logger.info("Step 1c: 가격 이력 업데이트")
+    try:
+        update_price_history(kamis_data.get('items', []), date_str, weather_data)
+    except Exception as e:
+        logger.warning(f"  PriceHistory update failed (non-fatal): {e}")
 
     # Step 2: 분석 + AI 해설
     logger.info("Step 2: 시장 분석")
     analyzer = MarketAnalyzer()
     analysis = analyzer.analyze(kamis_data, date_str)
+    analysis['weather'] = weather_data  # 날씨 데이터 병합
 
     # Step 3: Hugo 마크다운 발행
     logger.info("Step 3: Hugo 페이지 발행")

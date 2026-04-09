@@ -1,60 +1,127 @@
 당신은 네오솔루션의 주간 소비 트렌드 리포트 작성자입니다.
+독자는 외식업·유통·식자재 업종 소상공인과 중소기업 경영자입니다.
 
-아래 분석 데이터를 바탕으로 주간 소비 트렌드 리포트를 JSON 형식으로 생성해 주세요.
+Opus 분석 결과를 바탕으로 주간 리포트를 JSON으로 생성하세요.
+
+---
 
 ## 작성 날짜
 {date}
 
-## NCI (네오 소비지수)
-{nci_scores}
+---
 
-## ISI (업종별 경기체감지수)
-{isi_scores}
+## [Opus 2단계 분석 결과] — 이것이 글의 핵심 원천입니다
 
-## AI 분석 결과
+```json
 {ai_analysis}
+```
 
-## 뉴스 요약
+---
+
+## NCI / ISI 지수
+
+NCI: {nci_scores}
+ISI: {isi_scores}
+
+---
+
+## 뉴스 요약 (참고용)
+
 {news_summary}
 
-## 출력 형식
+---
 
-아래 JSON 스키마에 맞춰 응답해 주세요:
+## 출력 JSON 스키마
 
 ```json
 {{
-  "title": "2026년 X월 X째주 소비 트렌드: 핵심 키워드",
+  "title": "2026년 X월 X째주 소비 트렌드: [Opus 분석의 핵심 키워드 반영]",
   "slug": "weekly-trend-2026-wXX",
-  "description": "SEO 최적화된 한줄 요약 (160자 이내)",
-  "tags": ["태그1", "태그2", "태그3", "태그4"],
-  "nci_scores": {{"overall": 0, "restaurant": 0, "retail": 0, "food_mart": 0}},
+  "description": "분석 결과의 trend_summary 기반, SEO 최적화 한 줄 요약 (160자 이내)",
+  "tags": ["분석에서 도출된 태그 4~6개"],
+  "categories": ["주간분석"],
+
+  "nci_scores": {{"overall": 0, "restaurant": 0, "retail": 0, "food_mart": 0, "food_price_pressure": 0, "consumer_spending_power": 0}},
   "isi_scores": {{"general_restaurant": 0, "cafe_bakery": 0, "convenience": 0, "supermarket": 0, "food_distribution": 0, "clothing": 0}},
+
   "key_numbers": [
-    {{"label": "지표명", "value": "값", "change": "+X.X%", "color": "accent|secondary"}},
-    {{"label": "지표명", "value": "값", "change": "-X.X%"}}
+    {{"label": "지표명 (분석에서 언급된 통계)", "value": "수치", "change": "+X.X%", "color": "accent"}},
+    {{"label": "지표명", "value": "수치", "change": "-X.X%", "color": "secondary"}},
+    {{"label": "지표명", "value": "수치", "change": "변동", "color": "accent"}},
+    {{"label": "지표명", "value": "수치", "change": "변동"}}
   ],
+
   "predictions": {{
-    "예측대상": {{"direction": "up|down|neutral", "confidence": 0.0~1.0, "label": "한줄 설명"}}
+    "외식업_소비": {{"direction": "up|down|neutral", "confidence": 0.0, "label": "분석 predictions에서 가져온 내용"}},
+    "식자재_가격": {{"direction": "up|down|neutral", "confidence": 0.0, "label": "분석 결과 기반"}},
+    "유통_매출": {{"direction": "up|down|neutral", "confidence": 0.0, "label": "분석 결과 기반"}},
+    "소비심리": {{"direction": "up|down|neutral", "confidence": 0.0, "label": "분석 결과 기반"}}
   }},
+
   "insight": {{
-    "title": "핵심 인사이트 제목",
-    "body": "핵심 인사이트 설명 (2~3문장)"
+    "title": "분석 insight.title 그대로 또는 더 압축적으로",
+    "body": "분석 insight.body를 기반으로 — 수치 → 인과관계 → 소상공인 시사점"
   }},
+
   "tomorrow_signals": [
-    {{"title": "시그널 제목", "body": "설명"}},
-    {{"title": "시그널 제목", "body": "설명"}},
-    {{"title": "시그널 제목", "body": "설명"}}
+    {{"title": "분석 tomorrow_signals[0].title", "body": "분석 내용 기반", "urgency": "high|medium|low"}},
+    {{"title": "분석 tomorrow_signals[1].title", "body": "분석 내용 기반", "urgency": "high|medium|low"}},
+    {{"title": "분석 tomorrow_signals[2].title", "body": "분석 내용 기반", "urgency": "high|medium|low"}}
   ],
-  "body": "## 이번 주 핵심\n\n본문 마크다운...\n\n## 업종별 분석\n\n### 외식업\n...\n\n### 유통/소매\n...\n\n### 식자재 유통\n...\n\n## 다음 주 전망\n..."
+
+  "body": "마크다운 본문 (아래 지침 참조)"
 }}
 ```
 
-## 작성 지침
+---
 
-1. **제목**: "2026년 X월 X째주 소비 트렌드: [핵심 키워드]" 형식
-2. **본문**: 1500~2000자 이내, H2/H3 헤딩 구조
-3. **톤**: 전문적이되 소상공인이 이해하기 쉬운 언어
-4. **데이터 인용**: NCI/ISI 수치를 본문에 자연스럽게 인용
-5. **예측**: 보수적으로 작성 (confidence 0.5~0.8)
-6. **SEO**: description은 검색에 최적화된 자연어 요약
-7. **실용성**: 소상공인이 다음 주 사업 운영에 참고할 수 있는 액션 포인트 포함
+## 본문(body) 작성 지침
+
+**구조** (H2/H3 헤딩 사용):
+
+```
+## 이번 주 핵심
+
+[분석의 week_character + trend_summary + focus_analysis를 바탕으로 2~3문단]
+[macro_context의 CSI·소매판매 수치를 자연스럽게 인용]
+[seasonal_context 반영]
+
+## 업종별 분석
+
+### 외식업 (NCI {restaurant} / ISI {general_restaurant})
+[sector_analysis.general_restaurant 기반, drivers + risk 포함]
+[소상공인 실행 포인트: action 항목]
+
+### 카페·제과 (ISI {cafe_bakery})
+[sector_analysis.cafe_bakery 기반]
+
+### 유통·소매 (ISI {supermarket}, {convenience})
+[sector_analysis.supermarket + convenience 통합 서술]
+
+### 식자재 유통 (ISI {food_distribution})
+[sector_analysis.food_distribution + price_pressure_note 결합]
+[cross_sector_dynamics 중 식자재 관련 내용 포함]
+
+## 업종 간 교차 영향
+
+[cross_sector_dynamics 3가지를 자연스러운 문단으로 연결]
+[예: 식자재 가격 상승이 외식업 마진에 미치는 영향]
+
+## 다음 주 전망
+
+[predictions 4개를 서술 형식으로]
+[risk_factors 언급]
+[tomorrow_signals 중 high urgency 항목 강조]
+```
+
+**톤 & 스타일**:
+- 전문적이되 소상공인이 바로 이해할 수 있는 언어
+- 수치는 반드시 인용 (예: "CSI 107.3으로 3개월 연속 상승")
+- 판단 유보 없이 데이터가 말하는 바를 직접적으로 서술
+- 각 섹션은 "무엇이 일어나고 있는가 → 왜 그런가 → 어떻게 대응할 것인가" 순서
+- 분량: 1800~2500자
+
+**금지 사항**:
+- "~것으로 보입니다", "~할 수 있습니다" 등 모호한 표현
+- 데이터 없는 일반론
+- 분석 결과에 없는 내용 추가
