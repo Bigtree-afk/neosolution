@@ -1,0 +1,19 @@
+# AI
+anthropic>=0.40.0
+
+# 데이터 수집
+feedparser>=6.0.0
+newsapi-python>=0.2.7
+requests>=2.31.0
+
+# 스토리지
+boto3>=1.34.0
+
+# 차트/이미지
+plotly>=5.18.0
+kaleido>=0.2.1
+pillow>=10.2.0
+
+# 유틸리티
+pyyaml>=6.0.0
+python-dotenv>=1.0.0

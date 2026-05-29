@@ -1,0 +1,13 @@
+{{/*
+  newsletter-signup.html
+  뉴스레터 구독 인라인 폼
+*/}}
+
+<div class="newsletter-box">
+  <h3>매주 소비 트렌드를 받아보세요</h3>
+  <p>네오솔루션의 주간 트렌드 리포트를 이메일로 받아보세요. 무료입니다.</p>
+  <form class="newsletter-form" action="/api/subscribe" method="post">
+    <input type="email" name="email" placeholder="이메일 주소" required>
+    <button type="submit">구독</button>
+  </form>
+</div>

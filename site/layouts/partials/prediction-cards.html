@@ -1,0 +1,29 @@
+{{/*
+  prediction-cards.html
+  소비 예측 카드 렌더링
+  Data source: .Params.predictions (map: asset → {direction, confidence, label})
+*/}}
+
+{{ with .Params.predictions }}
+<div class="nci-section">
+  <div class="nci-header">
+    <span class="nci-label">NeoSolution's Call</span>
+  </div>
+  <div class="nci-title">이번 주 전망</div>
+
+  <div class="prediction-grid">
+    {{ range $asset, $pred := . }}
+    <div class="prediction-card">
+      <div class="prediction-direction {{ $pred.direction }}">
+        {{ if eq $pred.direction "up" }}&#9650;{{ else if eq $pred.direction "down" }}&#9660;{{ else }}&#9644;{{ end }}
+      </div>
+      <div class="prediction-info">
+        <div class="prediction-asset">{{ $asset }}</div>
+        {{ with $pred.label }}<div class="prediction-label">{{ . }}</div>{{ end }}
+        {{ with $pred.confidence }}<div class="prediction-confidence">신뢰도 {{ printf "%.0f" (mul . 100) }}%</div>{{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

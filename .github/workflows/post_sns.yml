@@ -1,0 +1,57 @@
+name: Post to SNS
+
+on:
+  workflow_run:
+    workflows: ["Publish Weekly Trend", "Publish Monthly Deep-dive"]
+    types:
+      - completed
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests pyyaml
+
+      - name: Set date
+        id: date
+        run: echo "date=$(TZ=Asia/Seoul date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+
+      - name: Post to Telegram
+        if: ${{ !cancelled() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_KO: ${{ secrets.TELEGRAM_CHANNEL_KO }}
+        run: |
+          python -c "
+          from pipeline.telegram_poster import post_to_channel
+          post_to_channel(
+              title='새로운 인사이트가 발행되었습니다',
+              description='네오솔루션의 최신 소비 트렌드 리포트를 확인하세요.',
+              url='https://neosolution.co.kr/insights/'
+          )
+          " || echo "Telegram posting failed (non-fatal)"
+
+      - name: Post summary
+        if: ${{ !cancelled() }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d chat_id="${TELEGRAM_CHAT_ID}" \
+            -d text="✅ SNS posting completed for ${{ steps.date.outputs.date }}" \
+            -d parse_mode=Markdown || true

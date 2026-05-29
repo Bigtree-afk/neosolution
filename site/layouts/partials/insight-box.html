@@ -1,0 +1,12 @@
+{{/*
+  insight-box.html
+  핵심 인사이트 박스 렌더링
+  Data source: .Params.insight (map: {title, body})
+*/}}
+
+{{ with .Params.insight }}
+<div class="insight-box">
+  {{ with .title }}<div class="insight-box-title">{{ . }}</div>{{ end }}
+  {{ with .body }}<div class="insight-box-body">{{ . }}</div>{{ end }}
+</div>
+{{ end }}

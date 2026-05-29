@@ -1,0 +1,36 @@
+{{/*
+  isi-bars.html
+  업종별 경기체감지수(ISI) 카드 렌더링
+  Data source: .Params.isi_scores (map: sector → 0–100)
+*/}}
+
+{{ $labels := dict
+  "general_restaurant" "일반음식점"
+  "cafe_bakery"        "카페/제과"
+  "convenience"        "편의점"
+  "supermarket"        "슈퍼/마트"
+  "food_distribution"  "식자재유통"
+  "clothing"           "의류/잡화"
+}}
+
+{{ with .Params.isi_scores }}
+<div class="nci-section">
+  <div class="nci-header">
+    <span class="nci-label">Industry Sentiment Index</span>
+    <span class="nci-hint">50 기준 — 이상 확장, 이하 위축</span>
+  </div>
+  <div class="nci-title">업종별 경기체감지수</div>
+
+  <div class="isi-grid">
+    {{ range $k, $v := . }}
+    {{ $displayLabel := index $labels $k | default ($k | replace "_" " " | title) }}
+    <div class="isi-card">
+      <div class="isi-sector">{{ $displayLabel }}</div>
+      <div class="isi-value" style="color: {{ if ge $v 60.0 }}#16a34a{{ else if ge $v 40.0 }}#1e293b{{ else }}#dc2626{{ end }};">
+        {{ printf "%.0f" (float $v) }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}

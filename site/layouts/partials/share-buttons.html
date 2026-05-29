@@ -1,0 +1,14 @@
+{{/*
+  share-buttons.html
+  소셜 공유 버튼
+*/}}
+
+{{ $url := .Permalink }}
+{{ $title := .Title }}
+
+<div class="share-buttons">
+  <a class="share-btn share-btn-kakao" href="https://story.kakao.com/share?url={{ $url }}" target="_blank" rel="noopener">카카오</a>
+  <a class="share-btn share-btn-naver" href="https://share.naver.com/web/shareView?url={{ $url }}&title={{ $title }}" target="_blank" rel="noopener">네이버</a>
+  <a class="share-btn share-btn-telegram" href="https://t.me/share/url?url={{ $url }}&text={{ $title }}" target="_blank" rel="noopener">텔레그램</a>
+  <a class="share-btn share-btn-link" href="#" onclick="navigator.clipboard.writeText('{{ $url }}');this.textContent='복사됨!';setTimeout(()=>this.textContent='링크 복사',2000);return false;">링크 복사</a>
+</div>

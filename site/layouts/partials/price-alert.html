@@ -1,0 +1,20 @@
+{{/* 가격 경보 배너 partial
+   사용: {{ partial "price-alert.html" . }}
+   필요 프론트매터: .Params.price_alert {level, message}
+   level: normal | caution | warning | favorable
+*/}}
+
+{{ with .Params.price_alert }}
+{{ $level := .level | default "normal" }}
+<div class="price-alert price-alert-{{ $level }}">
+  <div class="price-alert-icon">
+    {{ if eq $level "warning" }}🚨{{ else if eq $level "caution" }}⚠️{{ else if eq $level "favorable" }}✅{{ else }}ℹ️{{ end }}
+  </div>
+  <div class="price-alert-content">
+    <span class="price-alert-badge">
+      {{ if eq $level "warning" }}원가 경보{{ else if eq $level "caution" }}가격 주의{{ else if eq $level "favorable" }}원가 완화{{ else }}가격 안정{{ end }}
+    </span>
+    <p class="price-alert-message">{{ .message }}</p>
+  </div>
+</div>
+{{ end }}
